@@ -1,5 +1,5 @@
 # Women In Dance Data Repository
-Here we will house course datasets and visualizations of women in dance data collections, interview transcripts, dancer profiles, and mission work towards preserving the cultural heritage of women of the African Diaspora through digital archive and storytelling. 
+This repository is for Women in Dance, a course instructed by Professor Lyrric Jackson for the Spelman College Dance Performance and Choreography Department. This repository holds course datasets and visualizations of women in dance data collections, interview transcripts, dancer profiles, and mission work towards preserving the cultural heritage of women of the African Diaspora through digital archive and storytelling. Faculty and student work combine to create a digital archive for women in dance, living and passed. 
 
 Coding Motifs: Tools Overview
 We are exploring how dance motifs—recurring gestures, phrases, or movements that unify choreography—can also be studied through computational tools. Just as choreographers manipulate motifs to create meaning, we can use code to identify, visualize, and analyze them in movement data.
