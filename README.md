@@ -7,6 +7,7 @@ We are exploring how dance motifs—recurring gestures, phrases, or movements th
 Below are three key tools we’ll be using:
 
 MATLAB
+
 What it is: A high-performance computing environment often used in engineering and science. 
 Why we use it in this course: MATLAB helps us take raw data (like CSV files of movement information) and turn them into visualizations that highlight recurring motifs.
 Examples for our work:
@@ -15,6 +16,7 @@ Examples for our work:
 * Building visual graphs that show how motifs repeat, vary, or shift across a piece.
 
 RStudio
+
 What it is: An open-source IDE for the R programming language, widely used in statistics, data visualization, and humanities research.
 Why we use it in this course: RStudio lets us explore the patterns and significance of motifs by applying statistical tools.
 Examples for our work:
@@ -23,6 +25,7 @@ Examples for our work:
 * Running analyses that connect motif frequency to larger cultural or narrative questions.
 
 GitHub
+
 What it is: A platform for storing, sharing, and collaborating on code.
 Why we use it in this course: GitHub connects our work to a larger community and makes the coding process transparent and collaborative.
 Examples for our work:
