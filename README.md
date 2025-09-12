@@ -1,4 +1,4 @@
-# women-in-dance-data
+## Women In Dance Data Repository
 Here we will house course datasets and visualizations of women in dance data collections, interview transcripts, dancer profiles, and mission work towards preserving the cultural heritage of women of the African Diaspora through digital archive and storytelling. 
 
 Coding Motifs: Tools Overview
