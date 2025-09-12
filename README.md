@@ -1,5 +1,5 @@
 # women-in-dance-data
-Datasets and visualizations of women in dance data collections, interview transcripts, dancer profiles, and mission work towards preserving the cultural heritage of women of the African Diaspora through digital archive and storytelling. 
+Here we will house course datasets and visualizations of women in dance data collections, interview transcripts, dancer profiles, and mission work towards preserving the cultural heritage of women of the African Diaspora through digital archive and storytelling. 
 
 Coding Motifs: Tools Overview
 We are exploring how dance motifs—recurring gestures, phrases, or movements that unify choreography—can also be studied through computational tools. Just as choreographers manipulate motifs to create meaning, we can use code to identify, visualize, and analyze them in movement data.
