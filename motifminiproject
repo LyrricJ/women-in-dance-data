@@ -1,0 +1,120 @@
+%% Robust timeline plot with diagnostics + fallback
+clearvars; close all;
+
+% ---------- sample data (replace with your readtable(...) if needed) ----------
+data = table( ...
+    {'2:06';'2:11';'2:17';'2:32';'2:40'}, ...
+    {'A';'B';'A';'B';'C'}, ...
+    {'3 sec';'6 sec';'15 sec';'6 sec';'8 sec'}, ...
+    {'Dancer 1';'Dancer 1';'Dancer 1';'Dancer 1';'Dancer 1'}, ...
+    'VariableNames', {'Timestamp_Frame','Motif','Duration','Performer'} );
+
+% ---------- 1) Parse timestamps robustly (mm:ss or hh:mm:ss or numeric) ----------
+n = height(data);
+ts = string(data.Timestamp_Frame);
+startSec = nan(n,1);
+for i = 1:n
+    s = strtrim(ts(i));
+    % hh:mm:ss
+    t = regexp(s,'^(\d+):(\d+):(\d+)$','tokens','once');
+    if ~isempty(t)
+        startSec(i) = str2double(t{1})*3600 + str2double(t{2})*60 + str2double(t{3});
+        continue
+    end
+    % mm:ss
+    t = regexp(s,'^(\d+):(\d+)$','tokens','once');
+    if ~isempty(t)
+        startSec(i) = str2double(t{1})*60 + str2double(t{2});
+        continue
+    end
+    % fallback: first numeric in string
+    tok = regexp(s,'(-?\d+(\.\d+)?)','match','once');
+    if ~isempty(tok)
+        startSec(i) = str2double(tok);
+    end
+end
+
+% ---------- 2) Parse duration (handles "15 sec", "6s", "0.5 sec") ----------
+durStr = string(data.Duration);
+durationSec = nan(n,1);
+for i = 1:n
+    m = regexp(durStr(i),'[\d]+(?:\.[\d]+)?','match','once');
+    if ~isempty(m)
+        durationSec(i) = str2double(m);
+    end
+end
+
+% ---------- quick table check: see parsed numeric values ----------
+disp(table(data.Timestamp_Frame, startSec, data.Duration, durationSec))
+
+% ---------- 3) motif mapping & colors ----------
+motifs = string(data.Motif);
+[uniqueMotifs, ~, motifIdx] = unique(motifs, 'stable');
+nMotifs = numel(uniqueMotifs);
+colors = lines(max(nMotifs,1));  % ensure at least one row
+
+% ---------- 4) Plot with diagnostics and fallback to patch() ----------
+figure('Color','w'); hold on;
+for i = 1:n
+    fprintf('Row %d -> start: %g  dur: %g  motif: %s  idx: %d\n', ...
+            i, startSec(i), durationSec(i), motifs(i), motifIdx(i));
+    % skip invalid rows
+    if isnan(startSec(i)) || isnan(durationSec(i))
+        warning('Skipping row %d: NaN start or duration', i);
+        continue
+    end
+    if durationSec(i) <= 0
+        warning('Skipping row %d: non-positive duration', i);
+        continue
+    end
+
+    y = motifIdx(i);
+    pos = double([startSec(i), y - 0.4, durationSec(i), 0.8]); % numeric 1x4
+
+    % sanity check
+    if ~isnumeric(pos) || numel(pos)~=4 || any(~isfinite(pos))
+        warning('Row %d: invalid rectangle Position: %s', i, mat2str(pos));
+        continue
+    end
+
+    try
+        % primary attempt
+        rectangle('Position', pos, 'FaceColor', colors(y,:), 'EdgeColor', 'k');
+    catch ME
+        % fallback: use patch (more forgiving)
+        warning('rectangle() failed on row %d: %s\nFalling back to patch()', i, ME.message);
+        xpoly = [pos(1), pos(1)+pos(3), pos(1)+pos(3), pos(1)];
+        ypoly = [pos(2), pos(2), pos(2)+pos(4), pos(2)+pos(4)];
+        patch(xpoly, ypoly, colors(y,:), 'EdgeColor', 'k');
+    end
+
+    % optional label centered on block
+    try
+        text(pos(1) + pos(3)/2, y, string(data.Performer{i}), ...
+             'HorizontalAlignment','center', 'VerticalAlignment','middle', 'FontSize', 9);
+    catch
+        % ignore if performer is weird type
+    end
+end
+
+% tidy up axes
+yticks(1:nMotifs); yticklabels(cellstr(uniqueMotifs));
+xlabel('Time (m:ss)'); ylabel('Motif'); title('Motif Timeline');
+xlim([max(0,min(startSec(~isnan(startSec)))-1), max(startSec(~isnan(startSec)) + durationSec(~isnan(durationSec))) + 1]);
+ylim([0.5, nMotifs + 0.5]);
+grid on;
+
+% ---------- 5) convert XTick labels to mm:ss (nice touch) ----------
+xt = get(gca,'XTick');
+lbl = cell(size(xt));
+for k = 1:numel(xt)
+    m = floor(xt(k)/60);
+    s = round(xt(k) - m*60);
+    if s == 60
+        m = m + 1; s = 0;
+    end
+    lbl{k} = sprintf('%d:%02d', m, s);
+end
+set(gca,'XTickLabel',lbl);
+
+hold off;
